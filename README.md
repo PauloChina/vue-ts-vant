@@ -1,7 +1,7 @@
 # vue-ts-vant
 
-基于 Vue + VueRouter + Vuex + Vant
-开启 Typescript 支持 类式组件写法
+基于 Vue + VueRouter + Vuex + Vant  
+开启 Typescript 支持 类式组件写法  
 自定义 cus-nav-bar 组件
 
 ## Project setup
