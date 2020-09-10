@@ -1,7 +1,7 @@
 import Vue from 'vue'
 
 //全局加载 一些常用 vant 组件
-import { Button, Icon, List, Loading, Dialog, NavBar } from 'vant'
+import { Button, Icon, List, Loading, Dialog, Image as VanImage } from 'vant'
 //全局加载 常用自定义组件
 import CusNavBar from './CusNavBar.vue'
 
@@ -10,6 +10,6 @@ Vue.use(Icon)
 Vue.use(List)
 Vue.use(Loading)
 Vue.use(Dialog)
-Vue.use(NavBar)
+Vue.use(VanImage)
 
 Vue.component('CusNavBar', CusNavBar)

@@ -18,8 +18,8 @@
 
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator'
-import { Sticky } from 'vant'
-
+import { Sticky, NavBar } from 'vant'
+Vue.use(NavBar)
 Vue.use(Sticky)
 
 @Component
