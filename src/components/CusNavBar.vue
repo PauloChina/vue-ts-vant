@@ -45,9 +45,3 @@ export default class CusNavBar extends Vue {
   }
 }
 </script>
-
-<style lang="scss" scoped>
-/deep/ .van-hairline--bottom::after {
-  border-bottom: 1px solid #ebedf0;
-}
-</style>
