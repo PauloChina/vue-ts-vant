@@ -29,8 +29,8 @@ export default class CusNavBar extends Vue {
   @Prop() public rightText?: string
   @Prop({ default: true }) public leftArrow?: boolean
   @Prop({ default: true }) public border?: boolean
-  @Prop({ default: true }) public fixed?: boolean
-  @Prop({ default: true }) public placeholder?: boolean
+  @Prop({ default: false }) public fixed?: boolean
+  @Prop({ default: false }) public placeholder?: boolean
   @Prop({ default: 1 }) public zIndex?: number | string
 
   clickLeft(): void {

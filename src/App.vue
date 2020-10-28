@@ -1,6 +1,9 @@
 <template>
   <div id="app">
-    <router-view></router-view>
+    <keep-alive>
+      <router-view v-if='$route.meta.keepAlive'></router-view>
+    </keep-alive>
+    <router-view v-if='!$route.meta.keepAlive'></router-view>
   </div>
 </template>
 
@@ -18,5 +21,6 @@ export default class App extends Vue {}
   -moz-osx-font-smoothing: grayscale;
   color: #333333;
   font-size: 14px;
+  width: 100%;
 }
 </style>
