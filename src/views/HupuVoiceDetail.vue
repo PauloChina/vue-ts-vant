@@ -40,12 +40,12 @@ export default class HupuDetail extends Vue {
 }
 </script>
 <style lang="scss" scoped>
-/deep/.artical-importantPic {
+::v-deep .artical-importantPic {
   width: 100%;
   margin-bottom: 10px;
   margin-top: 10px;
 }
-/deep/ img {
+::v-deep img {
   width: 100%;
 }
 </style>

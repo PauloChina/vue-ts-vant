@@ -13,15 +13,15 @@
                     <div class="cell-title">{{item.title}}</div>
                     <div class="cell-label">
                       <div class="inline-block">
-                        <van-icon name="like-o" /><span>&nbsp;{{item.like}}</span>
+                        <van-icon name="chat-o" /><span>&nbsp;{{item.replies}}</span>
                       </div>
                       <div class="inline-block m-l-10">
-                        <van-icon name="chat-o" /><span>&nbsp;{{item.comment}}</span>
+                        <span>来自&nbsp;{{item.topic.name}}</span>
                       </div>
                     </div>
                   </div>
-                  <div class="cell-img" v-if="item.hasImg">
-                    <van-image :radius="5" fit="cover" lazy-load :src="item.img" />
+                  <div class="cell-img" v-if="item.cover">
+                    <van-image :radius="5" fit="cover" lazy-load :src="item.cover" />
                   </div>
                 </div>
               </template>
@@ -37,8 +37,18 @@
               <template #title>
                 <div class="cell-title">{{item.title}}</div>
                 <div class="cell-label flex">
-                  <div class="flex1">来自&nbsp;{{item.from}}</div>
-                  <div>{{item.time}}</div>
+                  <div class="flex1">
+                    <span>来自&nbsp;{{item.username}}</span>
+                    <span class="m-l-10">{{item.time}}</span>
+                  </div>
+                  <div>
+                    <span>
+                      <van-icon name="award-o" />&nbsp;{{item.recommendNum}}
+                    </span>
+                    <span class="m-l-10">
+                      <van-icon name="chat-o" />&nbsp;{{item.replies}}
+                    </span>
+                  </div>
                 </div>
               </template>
             </van-cell>
@@ -54,12 +64,12 @@
                 <div class="cell-title">{{item.title}}</div>
                 <div class="cell-label flex">
                   <div class="flex1">
-                    <span>{{item.label}}</span>
-                    <span class="m-l-10">{{item.t_post}}</span>
+                    <span>来自&nbsp;{{item.username}}</span>
+                    <span class="m-l-10">{{item.time}}</span>
                   </div>
                   <div>
                     <span>
-                      <van-icon name="award-o" />&nbsp;{{item.lights}}
+                      <van-icon name="award-o" />&nbsp;{{item.recommendNum}}
                     </span>
                     <span class="m-l-10">
                       <van-icon name="chat-o" />&nbsp;{{item.replies}}
@@ -108,12 +118,10 @@ export default class Hupu extends Vue {
         .get(this.$api.hupuSummary, { p: this.news.page })
         .then((r: any) => {
           this.news.loading = false
-          if (r.code == 200 && r.data.length > 0) {
-            this.news.page++
-            this.news.list = this.news.list.concat(r.data)
-          } else {
-            this.news.finished = true
+          if (r.length > 0) {
+            this.news.list = r
           }
+          this.news.finished = true
         })
         .catch(() => {
           this.news.loading = false
@@ -126,12 +134,10 @@ export default class Hupu extends Vue {
     this.onNewsLoad()
   }
   goNewsDetail(v: any) {
-    const str = v.url.match(/\/[0-9]+.html/)
-    if (str[0]) {
-      const id: string = str[0].match(/[0-9]+/)[0]
+    if (v.tid) {
       this.$router.push({
         name: 'HupuDetail',
-        query: { id },
+        query: { id: v.tid },
       })
     }
   }
@@ -155,9 +161,9 @@ export default class Hupu extends Vue {
         .get(this.$api.hupuVoices, { p: this.voices.page })
         .then((r: any) => {
           this.voices.loading = false
-          if (r && r.length > 0) {
+          if (r.data && r.data.topicThreads && r.data.topicThreads.length > 0) {
             this.voices.page++
-            this.voices.list = this.voices.list.concat(r)
+            this.voices.list = this.voices.list.concat(r.data.topicThreads)
           } else {
             this.voices.finished = true
           }
@@ -172,12 +178,10 @@ export default class Hupu extends Vue {
     this.onVoicesLoad()
   }
   goVoicesDetail(v: any) {
-    const str = v.url.match(/\/[0-9]+.html/)
-    if (str[0]) {
-      const id: string = str[0].match(/[0-9]+/)[0]
+    if (v.tid) {
       this.$router.push({
-        name: 'HupuVoiceDetail',
-        query: { id },
+        name: 'HupuDetail',
+        query: { id: v.tid },
       })
     }
   }
@@ -201,9 +205,9 @@ export default class Hupu extends Vue {
         .get(this.$api.hupuTopics, { p: this.topics.page })
         .then((r: any) => {
           this.topics.loading = false
-          if (r.status == 200 && r.data.t_list.length > 0) {
+          if (r.data && r.data.topicThreads && r.data.topicThreads.length > 0) {
             this.topics.page++
-            this.topics.list = this.topics.list.concat(r.data.t_list)
+            this.topics.list = this.topics.list.concat(r.data.topicThreads)
           } else {
             this.topics.finished = true
           }
@@ -241,7 +245,7 @@ export default class Hupu extends Vue {
   max-height: 62px;
   margin-left: 10px;
 }
-/deep/.cell-img .van-image {
+::v-deep .cell-img .van-image {
   max-height: 62px;
 }
 </style>

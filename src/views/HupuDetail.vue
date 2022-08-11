@@ -4,10 +4,10 @@
     <div class="p-10">
       <van-loading v-show="loading" size="24px">加载中...</van-loading>
       <div class="t-20 t-bold">{{title}}</div>
-      <div v-if="user.username" class="flex align-center m-t-10">
-        <van-image class="avatar" round fit="cover" :src="user.header" />
-        <div class="m-l-10">{{user.username}}</div>
-        <div>{{user.date}}</div>
+      <div v-if="user" class="flex align-center m-t-10">
+        <van-image v-if="user.header" class="avatar m-r-10" round fit="cover" :src="user.header" />
+        <div class="flex1">{{user.puname}}</div>
+        <div>{{time}}</div>
       </div>
       <div class="detail-content m-t-10" v-html="content"></div>
       <div class="floors" v-if="lights.length > 0">
@@ -34,6 +34,7 @@ Vue.use(Divider)
 @Component
 export default class HupuDetail extends Vue {
   title = ''
+  time = ''
   content = ''
   replies = []
   lights = []
@@ -50,26 +51,45 @@ export default class HupuDetail extends Vue {
   getHtml(id: string) {
     this.loading = true
     this.$http
-      .get(this.$api.hupuBbsDetail, { id })
+      // .get(this.$api.hupuBbsDetail, { id })
+      .get(this.$api.hupuVoiceDetail, { id })
       .then((r: any) => {
         this.loading = false
-        const tmp = r.props.pageProps.thread.t_detail
-        this.title = tmp.title
-        this.content = tmp.content
-        this.user = tmp.user
-        this.getComments(id)
-        setTimeout(function () {
-          document.querySelectorAll('.lazy-gif>img').forEach((i) => {
-            i.addEventListener('click', function (e) {
-              const tmp = e.target as Element
-              const url = tmp.getAttribute('data-gif')
-              if (url) {
-                tmp.setAttribute('src', url)
-                tmp.setAttribute('data-gif', '')
-              }
-            })
-          })
-        }, 1000)
+        const obj = r.detail?.thread
+        if (obj) {
+          this.title = obj.title
+          this.content = obj.content
+          this.time = obj.createdAtFormat
+          this.user = obj.author
+          if (obj.hasVideo) {
+            this.content = `<video src="${obj.video}" controls=""></video><br/>` + this.content
+          }
+          this.getComments(id)
+        }
+        // const tmp = r.props.pageProps.thread.t_detail
+        // this.title = tmp.title
+        // try {
+        //   const contentObj = JSON.parse(tmp.content)
+        //   if (contentObj.type && contentObj.type == 'iframe-match') {
+        //     this.content = `<a href="${contentObj.url}">比赛详情</a>`
+        //   }
+        // } catch (e) {
+        //   this.content = tmp.content
+        // }
+        // this.user = tmp.user
+        // this.getComments(id)
+        // setTimeout(function () {
+        //   document.querySelectorAll('.lazy-gif>img').forEach((i) => {
+        //     i.addEventListener('click', function (e) {
+        //       const tmp = e.target as Element
+        //       const url = tmp.getAttribute('data-gif')
+        //       if (url) {
+        //         tmp.setAttribute('src', url)
+        //         tmp.setAttribute('data-gif', '')
+        //       }
+        //     })
+        //   })
+        // }, 1000)
       })
       .catch(() => {
         this.loading = false
@@ -96,37 +116,47 @@ export default class HupuDetail extends Vue {
 .detail-content {
   line-height: 1.6;
 }
-/deep/.basketballTobbs_tag {
-  display: none;
+::v-deep .detail-content img {
+  max-width: 100%;
 }
-/deep/.article-deposit-pic {
-  margin: 10px 0;
-  width: 100%;
+::v-deep .floors img {
+  max-width: 100%;
 }
-/deep/.lazy-gif {
-  position: relative;
-  display: block;
-  background: #c4c4c4;
+::v-deep .detail-content video {
+  max-width: 100%;
 }
-/deep/.lazy-gif .article-deposit-pic {
-  margin: 0;
-  max-width: 350px;
-}
-/deep/.van-cell {
+::v-deep .van-cell {
   padding-right: 0;
   padding-left: 0;
 }
-/deep/.gif-icon {
-  position: absolute;
-  width: 35px;
-  height: 35px;
-  right: 0;
-  bottom: 0;
-  background: url(https://w3.hoopchina.com.cn/images/m/gif-sign.png) center / 100% no-repeat;
-}
-/deep/ video {
-  max-width: 100%;
-}
+// ::v-deep .basketballTobbs_tag {
+//   display: none;
+// }
+// ::v-deep .article-deposit-pic {
+//   margin: 10px 0;
+//   width: 100%;
+// }
+// ::v-deep .lazy-gif {
+//   position: relative;
+//   display: block;
+//   background: #c4c4c4;
+// }
+// ::v-deep .lazy-gif .article-deposit-pic {
+//   margin: 0;
+//   max-width: 350px;
+// }
+
+// ::v-deep .gif-icon {
+//   // position: absolute;
+//   // width: 35px;
+//   // height: 35px;
+//   // right: 0;
+//   // bottom: 0;
+//   // background: url(https://w3.hoopchina.com.cn/images/m/gif-sign.png) center / 100% no-repeat;
+// }
+// ::v-deep video {
+//   max-width: 100%;
+// }
 .avatar {
   width: 36px;
   height: 36px;
@@ -138,50 +168,39 @@ export default class HupuDetail extends Vue {
 .floors .floor-row:last-child {
   border-bottom: none;
 }
-/deep/.floor_box {
-  font-size: 13px;
-  width: 100%;
+
+::v-deep .van-loading {
+  text-align: center;
 }
-/deep/.user,
-/deep/.floor_box .right.f666,
-/deep/.floor_box .case .f999,
-/deep/.floor_box .liangShare {
-  display: none;
+::v-deep .van-divider {
+  margin: 4px 0;
 }
-/deep/.floor_box .author {
-  margin-bottom: 5px;
-}
-/deep/.floor_box .author .left .u {
-  margin-right: 14px;
-}
-/deep/.floor_box .author .left .f444 {
-  float: right;
-}
-/deep/.floor_box .case p {
+
+::v-deep .floor-row p {
   line-height: 1.6;
   margin-top: 0.3rem;
   margin-bottom: 0.3rem;
 }
-/deep/.floor_box .case img {
-  max-width: 100%;
+
+::v-deep .floor-row .user-base-info {
+  display: flex;
+  justify-content: space-between;
 }
-/deep/.floor_box .case {
-  line-height: 1.6;
-  table-layout: fixed;
-  width: 100%;
-}
-/deep/.floor_box .case td br {
+::v-deep .floor-row .user-operate,
+::v-deep .floor-row .bbs-admin-reply-post-container,
+::v-deep .floor-row .seo-dom,
+::v-deep .floor-row .todo-list,
+::v-deep .floor-row .bbs-admin-reply-quote-container {
   display: none;
 }
-/deep/.floor_box .case blockquote {
-  margin: 0.3rem 0.5rem;
-  padding: 0.3rem 0.5rem;
-  background: #f4f4f4;
+
+::v-deep .floor-row .todo-list.light {
+  display: block !important;
 }
-/deep/.van-loading {
-  text-align: center;
-}
-/deep/.van-divider {
-  margin: 4px 0;
+
+::v-deep .bbs-thread-comp.quote-thread {
+  padding: 10px 0 10px 10px;
+  margin: 10px 0 0 0;
+  background: #e4e4e4;
 }
 </style>
