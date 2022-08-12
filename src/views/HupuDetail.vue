@@ -125,9 +125,15 @@ export default class HupuDetail extends Vue {
 ::v-deep .detail-content video {
   max-width: 100%;
 }
+::v-deep .floors video {
+  max-width: 100%;
+}
 ::v-deep .van-cell {
   padding-right: 0;
   padding-left: 0;
+}
+::v-deep .detail-content p {
+  word-break: break-all;
 }
 // ::v-deep .basketballTobbs_tag {
 //   display: none;
@@ -180,6 +186,7 @@ export default class HupuDetail extends Vue {
   line-height: 1.6;
   margin-top: 0.3rem;
   margin-bottom: 0.3rem;
+  word-break: break-all;
 }
 
 ::v-deep .floor-row .user-base-info {
